@@ -57,7 +57,7 @@ main{padding:28px 0 60px}
 .card:hover{border-color:var(--accent)}
 .card.out{opacity:.6}
 .thumb{aspect-ratio:4/3;display:grid;place-items:center;position:relative}
-.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb img{width:100%;height:100%;object-fit:contain;background:#fff}
 #dlgThumb{display:block;aspect-ratio:auto;height:min(45vh,400px);overflow:hidden;background:#fff!important}
 #dlgThumb img{display:block;width:100%;height:100%;object-fit:contain}
 #dlgThumb .mono{display:grid;place-items:center;height:100%}
@@ -116,7 +116,9 @@ body.has-timer main{padding-bottom:90px}
   .chip{flex:0 0 auto}
   .grid{grid-template-columns:1fr;gap:10px}
   .card{grid-template-rows:none;grid-template-columns:88px 1fr}
-  .card .thumb{aspect-ratio:auto;min-height:100%}
+  .card .thumb{aspect-ratio:auto;min-height:100%;place-items:start center;background:#fff!important}
+  .card .thumb img{height:auto;aspect-ratio:1}
+  .card .thumb .mono{align-self:center}
   .card .thumb .mono{font-size:1.5rem}
   .card .badge{top:6px;left:6px;font-size:.62rem;padding:2px 6px}
   .card .body{padding:12px 14px}
@@ -198,9 +200,11 @@ const SECRET = "shop-7Rk2"; // change this to cancel today's code immediately
 const ITEMS = [
   /* ---- Vapes ---- */
   { name:"Geek Bar Pulse", category:"Vapes", price:25, desc:"Up to 15,000 puffs", status:"in", color:"#cfd8f2",
-    flavors:["Blue Razz Ice", "Strawberry Savers", "B-Burst", "OMG B-Burst", "Sour Apple B-Burst", "Pink Lemonade", "Peach Lemonade", "Punch", "Sour Blue Dust", "Banana Ice", "Juicy Peach Ice", "Drop Sour Savers", "Mexico Mango", "Blueberry Watermelon", "Fcuking Fab", "Sour Apple Ice", "White Gummy Ice", "Sour Watermelon Drop", "Lemon Hubba"], soldOut:[] },
+    flavors:["Blue Razz Ice", "Strawberry Savers", "B-Burst", "OMG B-Burst", "Sour Apple B-Burst", "Pink Lemonade", "Peach Lemonade", "Punch", "Sour Blue Dust", "Banana Ice", "Juicy Peach Ice", "Drop Sour Savers", "Mexico Mango", "Blueberry Watermelon", "Fcuking Fab", "Sour Apple Ice", "White Gummy Ice", "Sour Watermelon Drop", "Lemon Hubba"], soldOut:[],
+    photos:{ "Blue Razz Ice":"images/gbp-blue-razz-ice.jpg", "Strawberry Savers":"images/gbp-strawberry-savers.jpg", "B-Burst":"images/gbp-b-burst.jpg", "OMG B-Burst":"images/gbp-omg-b-burst.jpg", "Sour Apple B-Burst":"images/gbp-sour-apple-b-burst.jpg", "Pink Lemonade":"images/gbp-pink-lemonade.jpg", "Peach Lemonade":"images/gbp-peach-lemonade.jpg", "Punch":"images/gbp-punch.jpg", "Sour Blue Dust":"images/gbp-sour-blue-dust.jpg", "Banana Ice":"images/gbp-banana-ice.jpg", "Juicy Peach Ice":"images/gbp-juicy-peach-ice.jpg", "Drop Sour Savers":"images/gbp-drop-sour-savers.jpg", "Mexico Mango":"images/gbp-mexico-mango.jpg", "Blueberry Watermelon":"images/gbp-blueberry-watermelon.jpg", "Fcuking Fab":"images/gbp-fcuking-fab.jpg", "Sour Apple Ice":"images/gbp-sour-apple-ice.jpg", "White Gummy Ice":"images/gbp-white-gummy-ice.jpg", "Sour Watermelon Drop":"images/gbp-sour-watermelon-drop.jpg" } },
   { name:"Geek Bar Pulse X", category:"Vapes", price:25, desc:"Up to 25,000 puffs", status:"in", color:"#e3d3f0",
-    flavors:["Orange Fcuking Fab", "Orange Jam", "Lemon Heads"], soldOut:[] },
+    flavors:["Orange Fcuking Fab", "Orange Jam", "Lemon Heads"], soldOut:[],
+    photos:{ "Orange Fcuking Fab":"images/gbx-orange-fcuking-fab.jpg", "Orange Jam":"images/gbx-orange-jam.jpg", "Lemon Heads":"images/gbx-lemon-heads.jpg" } },
   { name:"Geek Bar Pulse X2", category:"Vapes", price:30, desc:"Up to 50,000 puffs", status:"in", color:"#f4d5dc",
     flavors:["Blue Razz Ice", "Wild Cherry Slush", "Banana Taffy Freeze", "Sour Fcuking Fab", "Blackberry Blueberry", "Blueberry Jam"], soldOut:[] },
   { name:"Flum Float Mello Pro", category:"Vapes", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#d6ebe3",
