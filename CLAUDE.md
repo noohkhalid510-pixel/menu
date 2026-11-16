@@ -14,6 +14,11 @@ Everything is in `index.html`, in the block marked `EDIT YOUR SHOP HERE`:
 - `OPEN_HOUR`: hour (24h clock) the daily QR code changes. `MINUTES`: how long each scan lasts (currently 10).
 - `ITEMS`: one line per product: `name`, `category`, `price`, `desc`, `status`, optional `isNew`, `color`.
   - `status`: `"in"` (in stock), `"low"` (only a few left), `"out"` (sold out, shown faded with a "Sold out" badge).
+  - Optional `priceLabel` replaces the shown price (e.g. `"$3 · 2 for $5"`, `"$2 each"`).
+  - Optional `flavors` list shows flavor chips. To mark one flavor sold out, add its exact name to `soldOut`
+    (shown crossed out). Use `status:"out"` only when the whole product is sold out.
+  - Categories now: Vapes, Hemp Carts, Cigars, Cigarillos, Wraps.
+  - Don't list psilocybin/"magic mushroom" products. The owner was told this.
   - Categories come from the items, in the order they first appear. A new category name creates a new filter button.
 - Keep `MENU_URL` as is. It works out the site address by itself.
 - Changing `SECRET` cancels today's QR code immediately (only if the owner asks).

@@ -67,6 +67,9 @@ main{padding:28px 0 60px}
 .name{font-weight:600;font-size:1.05rem}
 .price{font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);white-space:nowrap}
 .desc{color:var(--muted);font-size:.93rem;margin:0}
+.flavors{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.flavor{font-size:.8rem;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink)}
+.flavor.out{color:var(--muted);text-decoration:line-through;opacity:.7}
 .empty{padding:40px 0;color:var(--muted)}
 dialog{border:none;border-radius:16px;padding:0;max-width:520px;width:calc(100% - 32px);background:var(--surface);color:var(--ink)}
 dialog::backdrop{background:rgba(10,20,18,.55)}
@@ -153,6 +156,7 @@ body.has-timer main{padding-bottom:90px}
     <div class="row"><h3 id="dlgTitle"></h3><span class="price" id="dlgPrice"></span></div>
     <div class="meta" id="dlgMeta"></div>
     <p class="desc" id="dlgDesc"></p>
+    <div id="dlgFlavors"></div>
     <button class="close" id="dlgClose" type="button">Close</button>
   </div>
 </dialog>
@@ -165,6 +169,8 @@ body.has-timer main{padding-bottom:90px}
    - Add, remove or edit items in ITEMS.
    - status: "in" (in stock), "low" (only a few left), "out" (sold out)
    - isNew: true shows a "New" badge
+   - priceLabel: optional text shown instead of the price, e.g. "$3 · 2 for $5"
+   - flavors: list of flavors shown under the item; put any sold-out flavor in soldOut
    ===================================================== */
 const SHOP = {
   currency: "$"
@@ -182,22 +188,57 @@ const MINUTES = 10;
 const SECRET = "shop-7Rk2"; // change this to cancel today's code immediately
 
 const ITEMS = [
-  { name:"Geek Bar Pulse", category:"Geek Bar", price:25, desc:"Up to 15,000 puffs", status:"in", color:"#cfd8f2" },
-  { name:"Geek Bar Pulse X", category:"Geek Bar", price:25, desc:"Up to 25,000 puffs", status:"in", color:"#e3d3f0" },
-  { name:"Geek Bar Pulse X2", category:"Geek Bar", price:30, desc:"Up to 50,000 puffs", status:"in", color:"#f4d5dc" },
+  /* ---- Vapes ---- */
+  { name:"Geek Bar Pulse", category:"Vapes", price:25, desc:"Up to 15,000 puffs", status:"in", color:"#cfd8f2" },
+  { name:"Geek Bar Pulse X", category:"Vapes", price:25, desc:"Up to 25,000 puffs", status:"in", color:"#e3d3f0" },
+  { name:"Geek Bar Pulse X2", category:"Vapes", price:30, desc:"Up to 50,000 puffs", status:"in", color:"#f4d5dc" },
+  { name:"Flum Float Mello Pro", category:"Vapes", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#d6ebe3" },
+  { name:"UT Bar 50K", category:"Vapes", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#cfe0d8" },
+  { name:"UT Bar Clear Tank 50K", category:"Vapes", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#dfe3ea" },
+  { name:"Foger", category:"Vapes", price:25, status:"in", color:"#f6e3b4" },
+  { name:"Al Fakher", category:"Vapes", price:25, status:"in", color:"#e7d7bf" },
 
-  { name:"Flum Float Mello Pro", category:"Flum", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#d6ebe3" },
-  { name:"UT Bar 50K", category:"Flum", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#cfe0d8" },
-  { name:"UT Bar Clear Tank 50K", category:"Flum", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#dfe3ea" },
+  /* ---- Hemp carts & disposables ---- */
+  { name:"Hidden Hills Live Rosin Cart 2g", category:"Hemp Carts", price:30, desc:"THC-P Ultra / D9", status:"in", color:"#dfe8d3",
+    flavors:["Zazzberry Candy (Hybrid)","Whipped Watermelon (Sativa)","Pineapple Upside Down Cake (Sativa)"], soldOut:[] },
+  { name:"Litty AF Blend Carts", category:"Hemp Carts", price:15, priceLabel:"$15 · 2 for $25 · 3 for $35", desc:"THCA / THCP / HD9", status:"in", color:"#f9dccb",
+    flavors:["Strawberry Lemonade (Sativa)","Tropical Punch (Indica)","Baja Blast (Sativa)"], soldOut:[] },
+  { name:"Litty Yetti Blend 3.5g Disposable", category:"Hemp Carts", price:35, status:"in", color:"#cfdcea",
+    flavors:["Candy Gas (Sativa)"], soldOut:[] },
 
-  { name:"Foger", category:"Foger", price:25, desc:"", status:"in", color:"#f6e3b4" },
+  /* ---- Cigars ---- */
+  { name:"Backwoods 5-Pack", category:"Cigars", price:10, status:"in", color:"#e7d7bf",
+    flavors:["Original","Honey","Honey Bourbon","Sweet Aromatic","Dark Stout","Dark Leaf","Banana","Smooth","White","Russian Cream","LA Aromatic"], soldOut:[] },
 
-  { name:"Al Fakher", category:"Al Fakher", price:25, desc:"", status:"in", color:"#e7d7bf" }
+  /* ---- Cigarillos ---- */
+  { name:"Dutch Masters", category:"Cigarillos", price:2, priceLabel:"$2 each", status:"in", color:"#e2cdb6",
+    flavors:["Silver","Honey Fusion"], soldOut:[] },
+  { name:"Swisher Sweets", category:"Cigarillos", price:2, priceLabel:"$2 each", status:"in", color:"#f2cfd8",
+    flavors:["Original","Diamonds"], soldOut:[] },
+
+  /* ---- Wraps ---- */
+  { name:"LooseLeaf 5-Pack", category:"Wraps", price:10, status:"in", color:"#f6e3b4",
+    flavors:["Almighty Leaf","Natural Dark Leaf","Sweet Aromatic","Honey Bourbon","Banana Dream","Watermelon Dream","Strawberry Dream","Peach Dream","Grape Dream"], soldOut:[] },
+  { name:"LooseLeaf 2-Pack", category:"Wraps", price:3, priceLabel:"$3 – $3.50", status:"in", color:"#f4d5dc",
+    flavors:["Natural Leaf","Natural Leaf Gold","San Andrés","Cookies Blueberry Banana","Cookies & Cream","Cinnamon Milk","Russian Cream","That's a Awful Lot Of Gold","Strawberry Dream","Banana Dream","Amber Dream","Emerald Dream","Purple Dream"], soldOut:[] },
+  { name:"LooseLeaf Crush", category:"Wraps", price:4, status:"in", color:"#efe0c8",
+    flavors:["Reserve Crush Black Edition","Banana Crush"], soldOut:[] },
+  { name:"Goodtimes Wraps", category:"Wraps", price:3, priceLabel:"$3 · 2 for $5", status:"in", color:"#d3e6e3",
+    flavors:["Natural","Sweet Aroma","Russian Cream","Vanilla","Banana","Dark Vanilla","Dark Russian","Dark Leaf","Dark Sweet","Dark Banana"], soldOut:[] },
+  { name:"Da Boss Leaf", category:"Wraps", price:3, priceLabel:"$3 – $3.50", status:"in", color:"#e3d3f0",
+    flavors:["Guava Glaze","Cookie Dream","Aromatic","Dark","Jamaican Dream","Peach Souffle","White","Royal Blue","LA Gold","Ruby Pear"], soldOut:[] },
+  { name:"Grabba Leaf", category:"Wraps", price:3, priceLabel:"$3 · 2 for $5", status:"in", color:"#dcc6b4" },
+  { name:"Grabba Leaf Whole Leaf", category:"Wraps", price:8, status:"in", color:"#d6e7cf" }
 ];
 /* ===================================================== */
 
 const $ = s => document.querySelector(s);
 const money = n => SHOP.currency + (Number.isInteger(n) ? n : n.toFixed(2));
+const priceText = it => it.priceLabel || money(it.price);
+const flavorHTML = it => (it.flavors && it.flavors.length) ? `<div class="flavors">${it.flavors.map(f => {
+  const out = (it.soldOut || []).includes(f);
+  return `<span class="flavor${out ? " out" : ""}"${out ? ' title="Sold out"' : ""}>${esc(f)}${out ? '<span class="sr" hidden> (sold out)</span>' : ""}</span>`;
+}).join("")}</div>` : "";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const initials = n => n.split(/\s+/).filter(w=>/[A-Za-z]/.test(w[0])).slice(0,2).map(w=>w[0]).join("").toUpperCase();
 const thumbHTML = it => `${it.image ? `<img src="${esc(it.image)}" alt="">` : `<span class="mono" aria-hidden="true">${initials(it.name)}</span>`}`;
@@ -225,7 +266,7 @@ function renderChips(){
 function render(){
   const q = $("#search").value.trim().toLowerCase();
   const list = ITEMS.filter(i => (active==="All" || i.category===active) &&
-    (!q || (i.name+" "+i.desc+" "+i.category).toLowerCase().includes(q)));
+    (!q || (i.name+" "+(i.desc||"")+" "+i.category+" "+(i.flavors||[]).join(" ")).toLowerCase().includes(q)));
   if (!list.length){ $("#menu").innerHTML = `<p class="empty">No items match “${esc(q)}”. Try another word or pick “All”.</p>`; return; }
   const groups = {};
   list.forEach(i => (groups[i.category] ||= []).push(i));
@@ -236,8 +277,8 @@ function render(){
         <button class="card ${it.status==="out"?"out":""}" type="button" data-idx="${ITEMS.indexOf(it)}">
           <div class="thumb" style="background:${esc(it.color||"#e5e9e4")}">${thumbHTML(it)}${badgeHTML(it)}</div>
           <div class="body">
-            <div class="row"><span class="name">${esc(it.name)}</span><span class="price">${money(it.price)}</span></div>
-            ${it.desc ? `<p class="desc">${esc(it.desc)}</p>` : ""}
+            <div class="row"><span class="name">${esc(it.name)}</span><span class="price">${priceText(it)}</span></div>
+            ${it.desc ? `<p class="desc">${esc(it.desc)}</p>` : ""}${flavorHTML(it)}
           </div>
         </button>`).join("")}
       </div>
@@ -258,7 +299,8 @@ $("#menu").addEventListener("click", e => {
   $("#dlgThumb").style.background = it.color || "#e5e9e4";
   $("#dlgThumb").innerHTML = thumbHTML(it) + badgeHTML(it);
   $("#dlgTitle").textContent = it.name;
-  $("#dlgPrice").textContent = money(it.price);
+  $("#dlgPrice").textContent = priceText(it);
+  $("#dlgFlavors").innerHTML = flavorHTML(it);
   $("#dlgDesc").textContent = it.desc;
   const stock = it.status==="out" ? `<span>Sold out, ask us when it's back</span>` :
                 it.status==="low" ? `<span class="stock-low">Only a few left</span>` : `<span class="stock-in">In stock</span>`;
