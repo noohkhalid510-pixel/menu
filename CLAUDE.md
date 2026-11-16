@@ -17,6 +17,9 @@ Everything is in `index.html`, in the block marked `EDIT YOUR SHOP HERE`:
   - Optional `priceLabel` replaces the shown price (e.g. `"$3 · 2 for $5"`, `"$2 each"`).
   - Optional `flavors` list shows flavor chips. To mark one flavor sold out, add its exact name to `soldOut`
     (shown crossed out). Use `status:"out"` only when the whole product is sold out.
+  - Pictures live in `images/` (JPEG, about 560px max side). `photos: { "Flavor": "images/x.jpg" }` gives each
+    flavor its own picture (tapping a flavor shows it); `image:"images/x.jpg"` is one picture for the whole item.
+    When the owner sends a product photo, crop/resize it with Pillow and save it there.
   - Categories now: Vapes, Hemp Carts, Cigars, Cigarillos, Wraps.
   - Don't list psilocybin/"magic mushroom" products. The owner was told this.
   - Categories come from the items, in the order they first appear. A new category name creates a new filter button.

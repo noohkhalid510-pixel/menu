@@ -58,6 +58,11 @@ main{padding:28px 0 60px}
 .card.out{opacity:.6}
 .thumb{aspect-ratio:4/3;display:grid;place-items:center;position:relative}
 .thumb img{width:100%;height:100%;object-fit:cover}
+#dlgThumb{display:block;aspect-ratio:auto;height:min(45vh,400px);overflow:hidden;background:#fff!important}
+#dlgThumb img{display:block;width:100%;height:100%;object-fit:contain}
+#dlgThumb .mono{display:grid;place-items:center;height:100%}
+dialog{max-height:calc(100% - 32px);overflow:auto}
+.pick{font-weight:600;color:var(--ink)}
 .thumb .mono{font-family:var(--display);font-size:2.6rem;color:rgba(0,0,0,.55)}
 .badge{position:absolute;top:10px;left:10px;font-size:.75rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--surface);color:var(--ink)}
 .badge.new{background:var(--accent);color:#fff}
@@ -68,7 +73,9 @@ main{padding:28px 0 60px}
 .price{font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);white-space:nowrap}
 .desc{color:var(--muted);font-size:.93rem;margin:0}
 .flavors{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.flavor{font-size:.8rem;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink)}
+.flavor{font:inherit;font-size:.8rem;padding:4px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink);cursor:pointer}
+.flavor:hover{border-color:var(--accent)}
+.flavor[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .flavor.out{color:var(--muted);text-decoration:line-through;opacity:.7}
 .empty{padding:40px 0;color:var(--muted)}
 dialog{border:none;border-radius:16px;padding:0;max-width:520px;width:calc(100% - 32px);background:var(--surface);color:var(--ink)}
@@ -171,6 +178,7 @@ body.has-timer main{padding-bottom:90px}
    - isNew: true shows a "New" badge
    - priceLabel: optional text shown instead of the price, e.g. "$3 · 2 for $5"
    - flavors: list of flavors shown under the item; put any sold-out flavor in soldOut
+   - photos: { "Flavor name": "images/file.jpg" } picture per flavor; image: one picture for the whole item
    ===================================================== */
 const SHOP = {
   currency: "$"
@@ -200,54 +208,69 @@ const ITEMS = [
 
   /* ---- Hemp carts & disposables ---- */
   { name:"Hidden Hills Live Rosin Cart 2g", category:"Hemp Carts", price:30, desc:"THC-P Ultra / D9", status:"in", color:"#dfe8d3",
-    flavors:["Zazzberry Candy (Hybrid)","Whipped Watermelon (Sativa)","Pineapple Upside Down Cake (Sativa)"], soldOut:[] },
+    flavors:["Zazzberry Candy (Hybrid)","Whipped Watermelon (Sativa)","Pineapple Upside Down Cake (Sativa)"], soldOut:[],
+    photos:{ "Zazzberry Candy (Hybrid)":"images/hh-zazzberry.jpg", "Whipped Watermelon (Sativa)":"images/hh-whipped-watermelon.jpg", "Pineapple Upside Down Cake (Sativa)":"images/hh-pineapple.jpg" } },
   { name:"Litty AF Blend Carts", category:"Hemp Carts", price:15, priceLabel:"$15 each · 2 for $25 · 3 for $35", desc:"THCA / THCP / HD9 · 1g cart", status:"in", color:"#f9dccb",
-    flavors:["Strawberry Lemonade (Sativa)","Tropical Punch (Indica)","Baja Blast (Sativa)"], soldOut:[] },
+    flavors:["Strawberry Lemonade (Sativa)","Tropical Punch (Indica)","Baja Blast (Sativa)"], soldOut:[],
+    photos:{ "Strawberry Lemonade (Sativa)":"images/litty-strawberry-lemonade.jpg", "Tropical Punch (Indica)":"images/litty-tropical-punch.jpg", "Baja Blast (Sativa)":"images/litty-baja-blast.jpg" } },
   { name:"Litty Yetti Blend 3.5g Disposable", category:"Hemp Carts", price:35, status:"in", color:"#cfdcea",
-    flavors:["Candy Gas (Sativa)"], soldOut:[] },
+    flavors:["Candy Gas (Sativa)"], soldOut:[],
+    photos:{ "Candy Gas (Sativa)":"images/yetti-candy-gas.jpg" } },
 
   /* ---- Cigars ---- */
   { name:"Backwoods 5-Pack", category:"Cigars", price:10, status:"in", color:"#e7d7bf",
-    flavors:["Original","Honey","Honey Bourbon","Sweet Aromatic","Dark Stout","Dark Leaf","Banana","Smooth","White","Russian Cream","LA Aromatic"], soldOut:[] },
-  { name:"Zemis", category:"Cigars", price:10, desc:"5 cigars + 5 wraps", status:"in", color:"#efe0c8" },
+    flavors:["Original","Honey","Honey Bourbon","Sweet Aromatic","Dark Stout","Dark Leaf","Banana","Smooth","White","Russian Cream","LA Aromatic"], soldOut:[],
+    photos:{ "Original":"images/bw-original.jpg", "Honey":"images/bw-honey.jpg", "Honey Bourbon":"images/bw-honey-bourbon.jpg", "Sweet Aromatic":"images/bw-sweet-aromatic.jpg", "Dark Stout":"images/bw-dark-stout.jpg", "Dark Leaf":"images/bw-dark-leaf.jpg", "Banana":"images/bw-banana.jpg", "Smooth":"images/bw-smooth.jpg", "White":"images/bw-white.jpg", "Russian Cream":"images/bw-russian-cream.jpg", "LA Aromatic":"images/bw-la-aromatic.jpg" } },
+  { name:"Zemis", image:"images/zemis.jpg", category:"Cigars", price:10, desc:"5 cigars + 5 wraps", status:"in", color:"#efe0c8" },
 
   /* ---- Cigarillos ---- */
   { name:"Dutch Masters", category:"Cigarillos", price:2, priceLabel:"$2 each", status:"in", color:"#e2cdb6",
-    flavors:["Silver","Honey Fusion"], soldOut:[] },
+    flavors:["Silver","Honey Fusion"], soldOut:[],
+    photos:{ "Silver":"images/dutch-silver.jpg", "Honey Fusion":"images/dutch-honey-fusion.jpg" } },
   { name:"Swisher Sweets", category:"Cigarillos", price:2, priceLabel:"$2 each", status:"in", color:"#f2cfd8",
-    flavors:["Original","Diamonds"], soldOut:[] },
+    flavors:["Original","Diamonds"], soldOut:[],
+    photos:{ "Original":"images/swisher-original.jpg", "Diamonds":"images/swisher-diamonds.jpg" } },
   { name:"Show Cigarillos", category:"Cigarillos", price:2, priceLabel:"$2 each", status:"in", color:"#dfe3ea",
-    flavors:["Silver"], soldOut:[] },
+    flavors:["Silver"], soldOut:[],
+    photos:{ "Silver":"images/show-silver.jpg" } },
 
   /* ---- Wraps ---- */
   { name:"LooseLeaf 5-Pack", category:"Wraps", price:10, status:"in", color:"#f6e3b4",
-    flavors:["Almighty Leaf","Natural Dark Leaf","Sweet Aromatic","Honey Bourbon","Banana Dream","Watermelon Dream","Strawberry Dream","Peach Dream","Grape Dream"], soldOut:[] },
+    flavors:["Almighty Leaf","Natural Dark Leaf","Sweet Aromatic","Honey Bourbon","Banana Dream","Watermelon Dream","Strawberry Dream","Peach Dream","Grape Dream"], soldOut:[],
+    photos:{ "Almighty Leaf":"images/ll5-almighty.jpg", "Natural Dark Leaf":"images/ll5-natural-dark.jpg", "Sweet Aromatic":"images/ll5-sweet-aromatic.jpg", "Honey Bourbon":"images/ll5-honey-bourbon.jpg", "Banana Dream":"images/ll5-banana.jpg", "Watermelon Dream":"images/ll5-watermelon.jpg", "Strawberry Dream":"images/ll5-strawberry.jpg", "Peach Dream":"images/ll5-peach.jpg", "Grape Dream":"images/ll5-grape.jpg" } },
   { name:"LooseLeaf 2-Pack", category:"Wraps", price:3, status:"in", color:"#f4d5dc",
-    flavors:["Natural Leaf","Natural Leaf Gold","San Andrés","That's a Awful Lot Of Gold","Strawberry Dream","Banana Dream","Amber Dream","Emerald Dream","Purple Dream"], soldOut:[] },
+    flavors:["Natural Leaf","Natural Leaf Gold","San Andrés","That's a Awful Lot Of Gold","Strawberry Dream","Banana Dream","Amber Dream","Emerald Dream","Purple Dream"], soldOut:[],
+    photos:{ "Natural Leaf":"images/ll2-natural.jpg", "Natural Leaf Gold":"images/ll2-natural-gold.jpg", "San Andrés":"images/ll2-san-andres.jpg", "That's a Awful Lot Of Gold":"images/ll2-awful-lot-gold.jpg", "Strawberry Dream":"images/ll2-strawberry.jpg", "Banana Dream":"images/ll2-banana.jpg", "Amber Dream":"images/ll2-amber.jpg", "Purple Dream":"images/ll2-purple.jpg" } },
   { name:"LooseLeaf 2-Pack Specialty", category:"Wraps", price:3.5, status:"in", color:"#f2cfd8",
-    flavors:["Cinnamon Milk","Cookies & Cream","Cookies Blueberry Banana","Russian Cream"], soldOut:[] },
-  { name:"LooseLeaf Chief Keef Grass", category:"Wraps", price:4, status:"in", color:"#d6e7cf" },
+    flavors:["Cinnamon Milk","Cookies & Cream","Cookies Blueberry Banana","Russian Cream"], soldOut:[],
+    photos:{ "Cinnamon Milk":"images/ll2-cinnamon-milk.jpg", "Cookies & Cream":"images/ll2-cookies-cream.jpg", "Cookies Blueberry Banana":"images/ll2-cookies-blueberry-banana.jpg", "Russian Cream":"images/ll2-russian-cream.jpg" } },
+  { name:"LooseLeaf Chief Keef Grass", image:"images/ll-chief-keef-grass.jpg", category:"Wraps", price:4, status:"in", color:"#d6e7cf" },
   { name:"LooseLeaf Crush", category:"Wraps", price:4, status:"in", color:"#efe0c8",
-    flavors:["Reserve Crush Black Edition","Banana Crush"], soldOut:[] },
+    flavors:["Reserve Crush Black Edition","Banana Crush"], soldOut:[],
+    photos:{ "Reserve Crush Black Edition":"images/crush-reserve.jpg", "Banana Crush":"images/crush-banana.jpg" } },
   { name:"Goodtimes Wraps", category:"Wraps", price:3, priceLabel:"$3 · 2 for $5", status:"in", color:"#d3e6e3",
-    flavors:["Natural","Sweet Aroma","Russian Cream","Vanilla","Banana","Dark Vanilla","Dark Russian","Dark Leaf","Dark Sweet","Dark Banana"], soldOut:[] },
+    flavors:["Natural","Sweet Aroma","Russian Cream","Vanilla","Banana","Dark Vanilla","Dark Russian","Dark Leaf","Dark Sweet","Dark Banana"], soldOut:[],
+    photos:{ "Natural":"images/gt-natural.jpg", "Sweet Aroma":"images/gt-sweet-aroma.jpg", "Russian Cream":"images/gt-russian-cream.jpg", "Vanilla":"images/gt-vanilla.jpg", "Banana":"images/gt-banana.jpg", "Dark Vanilla":"images/gt-dark-vanilla.jpg", "Dark Russian":"images/gt-dark-russian.jpg", "Dark Leaf":"images/gt-dark-leaf.jpg", "Dark Sweet":"images/gt-dark-sweet.jpg", "Dark Banana":"images/gt-dark-banana.jpg" } },
   { name:"Backwoods True Wraps", category:"Wraps", price:11, status:"in", color:"#e2cdb6",
-    flavors:["Original","Aromatic","Vanilla"], soldOut:[] },
-  { name:"Grabba Leaf", category:"Wraps", price:3, priceLabel:"$3 · 2 for $5", status:"in", color:"#dcc6b4" },
-  { name:"Grabba Leaf Whole Leaf", category:"Wraps", price:8, status:"in", color:"#d6e7cf" }
+    flavors:["Original","Aromatic","Vanilla"], soldOut:[],
+    photos:{ "Original":"images/tw-original.jpg", "Aromatic":"images/tw-aromatic.jpg", "Vanilla":"images/tw-vanilla.jpg" } },
+  { name:"Grabba Leaf", image:"images/grabba.jpg", category:"Wraps", price:3, priceLabel:"$3 · 2 for $5", status:"in", color:"#dcc6b4" },
+  { name:"Grabba Leaf Whole Leaf", image:"images/grabba-whole.jpg", category:"Wraps", price:8, status:"in", color:"#d6e7cf" }
 ];
 /* ===================================================== */
 
 const $ = s => document.querySelector(s);
 const money = n => SHOP.currency + (Number.isInteger(n) ? n : n.toFixed(2));
 const priceText = it => it.priceLabel || money(it.price);
-const flavorHTML = it => (it.flavors && it.flavors.length) ? `<div class="flavors">${it.flavors.map(f => {
+const photoOf = (it, f) => (f && it.photos && it.photos[f]) || it.image || (it.photos ? Object.values(it.photos)[0] : "");
+const flavorHTML = (it, picked) => (it.flavors && it.flavors.length) ? `<div class="flavors">${it.flavors.map(f => {
   const out = (it.soldOut || []).includes(f);
-  return `<span class="flavor${out ? " out" : ""}"${out ? ' title="Sold out"' : ""}>${esc(f)}${out ? '<span class="sr" hidden> (sold out)</span>' : ""}</span>`;
+  return `<button type="button" class="flavor${out ? " out" : ""}" data-flavor="${esc(f)}" aria-pressed="${f === picked}"${out ? ' title="Sold out"' : ""}>${esc(f)}${out ? '<span class="sr" hidden> (sold out)</span>' : ""}</button>`;
 }).join("")}</div>` : "";
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const initials = n => n.split(/\s+/).filter(w=>/[A-Za-z]/.test(w[0])).slice(0,2).map(w=>w[0]).join("").toUpperCase();
-const thumbHTML = it => `${it.image ? `<img src="${esc(it.image)}" alt="">` : `<span class="mono" aria-hidden="true">${initials(it.name)}</span>`}`;
+const thumbHTML = (it, f) => { const src = photoOf(it, f);
+  return src ? `<img src="${esc(src)}" alt="${esc(it.name + (f ? " " + f : ""))}" loading="lazy">` : `<span class="mono" aria-hidden="true">${initials(it.name)}</span>`; };
 const badgeHTML = it => it.status==="out" ? `<span class="badge out">Sold out</span>` : it.isNew ? `<span class="badge new">New</span>` : "";
 
 /* ---------- Daily access code: #menu-<day><check> ---------- */
@@ -280,13 +303,13 @@ function render(){
     <section class="section" aria-label="${esc(cat)}">
       <h2>${esc(cat)} <span>${items.length} item${items.length>1?"s":""}</span></h2>
       <div class="grid">${items.map(it => `
-        <button class="card ${it.status==="out"?"out":""}" type="button" data-idx="${ITEMS.indexOf(it)}">
+        <div class="card ${it.status==="out"?"out":""}" role="button" tabindex="0" data-idx="${ITEMS.indexOf(it)}">
           <div class="thumb" style="background:${esc(it.color||"#e5e9e4")}">${thumbHTML(it)}${badgeHTML(it)}</div>
           <div class="body">
             <div class="row"><span class="name">${esc(it.name)}</span><span class="price">${priceText(it)}</span></div>
             ${it.desc ? `<p class="desc">${esc(it.desc)}</p>` : ""}${flavorHTML(it)}
           </div>
-        </button>`).join("")}
+        </div>`).join("")}
       </div>
     </section>`).join("");
 }
@@ -299,19 +322,34 @@ $("#chips").addEventListener("click", e => {
 $("#search").addEventListener("input", render);
 
 const dlg = $("#dlg");
-$("#menu").addEventListener("click", e => {
-  const c = e.target.closest(".card"); if (!c) return;
-  const it = ITEMS[c.dataset.idx];
-  $("#dlgThumb").style.background = it.color || "#e5e9e4";
-  $("#dlgThumb").innerHTML = thumbHTML(it) + badgeHTML(it);
+let dlgItem = null;
+function showFlavor(it, f){
+  $("#dlgThumb").innerHTML = thumbHTML(it, f) + badgeHTML(it);
+  $("#dlgFlavors").innerHTML = flavorHTML(it, f);
+  const out = f && (it.soldOut || []).includes(f);
+  const stock = (it.status==="out" || out) ? `<span>Sold out</span>` :
+                it.status==="low" ? `<span class="stock-low">Only a few left</span>` : `<span class="stock-in">In stock</span>`;
+  $("#dlgMeta").innerHTML = (f ? `<span class="pick">${esc(f)}</span><span aria-hidden="true">·</span>` : "") + stock;
+}
+function openItem(it, f){
+  dlgItem = it;
+  if (!f && it.flavors && it.flavors.length) f = it.flavors.find(x => !(it.soldOut||[]).includes(x)) || it.flavors[0];
   $("#dlgTitle").textContent = it.name;
   $("#dlgPrice").textContent = priceText(it);
-  $("#dlgFlavors").innerHTML = flavorHTML(it);
-  $("#dlgDesc").textContent = it.desc;
-  const stock = it.status==="out" ? `<span>Sold out, ask us when it's back</span>` :
-                it.status==="low" ? `<span class="stock-low">Only a few left</span>` : `<span class="stock-in">In stock</span>`;
-  $("#dlgMeta").innerHTML = `<span>${esc(it.category)}</span><span aria-hidden="true">·</span>${stock}`;
-  if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open","");
+  $("#dlgDesc").textContent = it.desc || "";
+  showFlavor(it, f);
+  if (!dlg.open){ if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open",""); }
+}
+$("#menu").addEventListener("click", e => {
+  const c = e.target.closest(".card"); if (!c) return;
+  const fl = e.target.closest(".flavor");
+  openItem(ITEMS[c.dataset.idx], fl ? fl.dataset.flavor : null);
+});
+$("#menu").addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.classList.contains("card")){ e.preventDefault(); openItem(ITEMS[e.target.dataset.idx]); }
+});
+$("#dlgFlavors").addEventListener("click", e => {
+  const fl = e.target.closest(".flavor"); if (fl && dlgItem) showFlavor(dlgItem, fl.dataset.flavor);
 });
 $("#dlgClose").addEventListener("click", () => dlg.close ? dlg.close() : dlg.removeAttribute("open"));
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
