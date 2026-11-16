@@ -123,7 +123,7 @@ body.has-timer main{padding-bottom:90px}
   </div>
 </section>
 
-<!-- Shown when the link has no code, a bad code, or the 20 minutes are up -->
+<!-- Shown when the link has no code, a bad code, or the time is up -->
 <section class="screen" id="gateView" hidden>
   <div class="screen-box">
     <svg class="qr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>
@@ -132,13 +132,6 @@ body.has-timer main{padding-bottom:90px}
 </section>
 
 <div id="menuView" hidden>
-<header>
-  <div class="wrap head">
-    <div>
-      <h1 id="shopName"></h1>
-          </div>
-  </div>
-</header>
 
 <div class="controls">
   <div class="wrap">
@@ -174,7 +167,6 @@ body.has-timer main{padding-bottom:90px}
    - isNew: true shows a "New" badge
    ===================================================== */
 const SHOP = {
-  name: "Your Shop Name",
   currency: "$"
 };
 
@@ -186,7 +178,7 @@ const MENU_URL = "" || (/claude/.test(location.hostname) || location.protocol ==
   ? "https://claude.ai/artifact/V3qL1bVvbBNZo5rZMBsBjz"
   : location.origin + location.pathname);
 const OPEN_HOUR = 9;
-const MINUTES = 20;
+const MINUTES = 10;
 const SECRET = "shop-7Rk2"; // change this to cancel today's code immediately
 
 const ITEMS = [
@@ -231,7 +223,6 @@ function readCode(hash){
   return check(k) === m[1].slice(-5) ? k : null;
 }
 
-$("#shopName").textContent = SHOP.name;
 
 const categories = ["All", ...new Set(ITEMS.map(i => i.category))];
 let active = "All";
@@ -315,7 +306,7 @@ function counter(){
 const timeUp = () => gate("Time\u2019s up. Scan again.");
 
 function menu(){
-  const ends = Date.now() + MINUTES * 60000; // every fresh scan starts a new 20 minutes
+  const ends = Date.now() + MINUTES * 60000; // every fresh scan starts a new countdown
   const update = () => {
     const left = ends - Date.now();
     if (left <= 0){ clearInterval(tick); timeUp(); return; }

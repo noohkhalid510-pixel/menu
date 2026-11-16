@@ -11,8 +11,7 @@ in one or two plain sentences. Don't ask them to touch GitHub.
 ## Where things are
 
 Everything is in `index.html`, in the block marked `EDIT YOUR SHOP HERE`:
-- `SHOP.name`: shop name shown at the top of the menu.
-- `OPEN_HOUR`: hour (24h clock) the daily QR code changes. `MINUTES`: how long each scan lasts.
+- `OPEN_HOUR`: hour (24h clock) the daily QR code changes. `MINUTES`: how long each scan lasts (currently 10).
 - `ITEMS`: one line per product: `name`, `category`, `price`, `desc`, `status`, optional `isNew`, `color`.
   - `status`: `"in"` (in stock), `"low"` (only a few left), `"out"` (sold out, shown faded with a "Sold out" badge).
   - Categories come from the items, in the order they first appear. A new category name creates a new filter button.
