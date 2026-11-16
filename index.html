@@ -182,27 +182,15 @@ const MINUTES = 10;
 const SECRET = "shop-7Rk2"; // change this to cancel today's code immediately
 
 const ITEMS = [
-  { name:"Disposable Vape 5000 Puffs", category:"Disposable Vapes", price:20, desc:"Rechargeable disposable. 5% nicotine. Flavors: Blue Razz, Watermelon Ice, Mint, Strawberry Kiwi.", status:"in", isNew:true, color:"#cfd8f2" },
-  { name:"Disposable Vape 10000 Puffs", category:"Disposable Vapes", price:28, desc:"Large-capacity disposable with screen display. 5% nicotine. Ask for current flavors.", status:"in", color:"#e3d3f0" },
-  { name:"Zero-Nicotine Disposable", category:"Disposable Vapes", price:15, desc:"Same flavors with 0% nicotine. About 3000 puffs.", status:"low", color:"#d6ebe3" },
+  { name:"Geek Bar Pulse", category:"Geek Bar", price:25, desc:"Up to 15,000 puffs", status:"in", color:"#cfd8f2" },
+  { name:"Geek Bar Pulse X", category:"Geek Bar", price:25, desc:"Up to 25,000 puffs", status:"in", color:"#e3d3f0" },
+  { name:"Geek Bar Pulse X2", category:"Geek Bar", price:30, desc:"Up to 50,000 puffs", status:"in", color:"#f4d5dc" },
 
-  { name:"Refill Pods (2-pack)", category:"Pods & Cartridges", price:14, desc:"Pre-filled pods for refillable pod devices. 3% or 5% nicotine.", status:"in", color:"#f2dccb" },
-  { name:"Empty Refillable Cartridges (3-pack)", category:"Pods & Cartridges", price:10, desc:"Fill with your own e-liquid. Fits most pod systems; ask us to check yours.", status:"in", color:"#dfe3ea" },
-  { name:"Replacement Coils (5-pack)", category:"Pods & Cartridges", price:16, desc:"Mesh coils for tank devices. 0.4 and 0.8 ohm available.", status:"out", color:"#e8e2d2" },
+  { name:"Flum Float Mello Pro", category:"Flum", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#d6ebe3" },
 
-  { name:"Salt Nic E-Liquid 30ml", category:"E-Liquids", price:18, desc:"Smooth nicotine salt e-liquid. 35mg or 50mg. Fruit, menthol and dessert flavors.", status:"in", color:"#f6e3b4" },
-  { name:"Freebase E-Liquid 60ml", category:"E-Liquids", price:22, desc:"For tank and sub-ohm devices. 0mg, 3mg or 6mg.", status:"in", isNew:true, color:"#f4d5dc" },
+  { name:"Foger", category:"Foger", price:25, desc:"", status:"in", color:"#f6e3b4" },
 
-  { name:"Cigarettes (pack)", category:"Tobacco", price:11, desc:"Most major brands in stock. Ask the counter for current pricing by brand.", status:"in", color:"#e7d7bf" },
-  { name:"Rolling Tobacco 1.4oz", category:"Tobacco", price:16, desc:"Loose-leaf tobacco pouch. Regular and smooth blends.", status:"in", color:"#dcc6b4" },
-  { name:"Nicotine Pouches", category:"Tobacco", price:6, desc:"Tobacco-free pouches. Mint, wintergreen and citrus. 3mg or 6mg.", status:"low", color:"#cfe0d8" },
-
-  { name:"Single Premium Cigar", category:"Cigars", price:9, desc:"Hand-rolled cigars from our humidor. Ask for today's selection.", status:"in", color:"#e2cdb6" },
-  { name:"Cigarillos (2-pack)", category:"Cigars", price:2, desc:"Machine-made cigarillos in several flavors.", status:"in", color:"#efe0c8" },
-
-  { name:"Pod Device Kit", category:"Accessories", price:30, desc:"Refillable pod starter kit with USB-C charging. Includes one empty pod.", status:"in", color:"#d3e6e3" },
-  { name:"Lighter", category:"Accessories", price:3, desc:"Disposable lighters. Torch lighters also available.", status:"in", color:"#f2cfd8" },
-  { name:"Rolling Papers & Tips", category:"Accessories", price:3, desc:"King-size papers and filter tips.", status:"in", color:"#d9cdf0" }
+  { name:"Al Fakher", category:"Al Fakher", price:25, desc:"", status:"in", color:"#e7d7bf" }
 ];
 /* ===================================================== */
 
@@ -247,7 +235,7 @@ function render(){
           <div class="thumb" style="background:${esc(it.color||"#e5e9e4")}">${thumbHTML(it)}${badgeHTML(it)}</div>
           <div class="body">
             <div class="row"><span class="name">${esc(it.name)}</span><span class="price">${money(it.price)}</span></div>
-            <p class="desc">${esc(it.desc)}</p>
+            ${it.desc ? `<p class="desc">${esc(it.desc)}</p>` : ""}
           </div>
         </button>`).join("")}
       </div>
