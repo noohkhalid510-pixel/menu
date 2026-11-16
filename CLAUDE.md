@@ -20,6 +20,8 @@ Everything is in `index.html`, in the block marked `EDIT YOUR SHOP HERE`:
   - Pictures live in `images/` (JPEG, about 560px max side). `photos: { "Flavor": "images/x.jpg" }` gives each
     flavor its own picture (tapping a flavor shows it); `image:"images/x.jpg"` is one picture for the whole item.
     When the owner sends a product photo, crop/resize it with Pillow and save it there.
+  - Vapes also have `brand` (Geek Bar, Flum, Foger, Al Fakher). Vapes show grouped by brand, one box per type
+    (name + puffs in `desc`, written like "15K puffs"), with a picture tile per flavor.
   - Categories now: Vapes, Hemp Carts, Cigars, Cigarillos, Wraps.
   - Don't list psilocybin/"magic mushroom" products. The owner was told this.
   - Categories come from the items, in the order they first appear. A new category name creates a new filter button.

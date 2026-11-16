@@ -50,6 +50,22 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(2rem,5vw,2.8rem);l
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 main{padding:28px 0 60px}
 .section{display:grid;gap:14px;margin-bottom:36px}
+.brands{display:flex;flex-wrap:wrap;gap:8px}
+.brands .chip{font-size:.85rem;padding:5px 12px}
+.brand{display:grid;gap:14px;margin-bottom:36px}
+.type{display:grid;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.type-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.type-head h3{margin:0;font-size:1.15rem;font-weight:600}
+.type-head .puffs{color:var(--muted);font-weight:500;margin-left:8px;font-size:.95rem}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.tile{font:inherit;color:var(--ink);text-align:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 8px 10px;display:grid;gap:6px;align-content:start;cursor:pointer}
+.tile:hover{border-color:var(--accent)}
+.tile .ph{aspect-ratio:1;display:grid;place-items:center;border-radius:8px;overflow:hidden}
+.tile .ph img{width:100%;height:100%;object-fit:contain}
+.tile .ph .mono{font-size:1.6rem}
+.tile .fl{font-size:.82rem;line-height:1.25;color:#1f3330}
+.tile.out{opacity:.45}
+.tile.out .fl{text-decoration:line-through}
 .section h2{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0;display:flex;gap:10px;align-items:baseline}
 .section h2 span{font-family:var(--body);font-size:.85rem;color:var(--muted)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
@@ -115,6 +131,8 @@ body.has-timer main{padding-bottom:90px}
   .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:2px 20px}
   .chip{flex:0 0 auto}
   .grid{grid-template-columns:1fr;gap:10px}
+  .tiles{grid-template-columns:repeat(3,1fr);gap:8px}
+  .type{padding:12px}
   .card{grid-template-rows:none;grid-template-columns:88px 1fr}
   .card .thumb{aspect-ratio:auto;min-height:100%;place-items:start center;background:#fff!important}
   .card .thumb img{height:auto;aspect-ratio:1}
@@ -148,6 +166,7 @@ body.has-timer main{padding-bottom:90px}
 <div class="controls">
   <div class="wrap">
     <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+    <div class="chips brands" id="brands" role="group" aria-label="Filter by brand" hidden></div>
     <label class="search"><span class="sr" hidden>Search items</span>
       <input id="search" type="search" placeholder="Search" aria-label="Search items">
     </label>
@@ -199,22 +218,22 @@ const SECRET = "shop-7Rk2"; // change this to cancel today's code immediately
 
 const ITEMS = [
   /* ---- Vapes ---- */
-  { name:"Geek Bar Pulse", category:"Vapes", price:25, desc:"Up to 15,000 puffs", status:"in", color:"#cfd8f2",
-    flavors:["Blue Razz Ice", "Strawberry Savers", "B-Burst", "OMG B-Burst", "Sour Apple B-Burst", "Pink Lemonade", "Peach Lemonade", "Punch", "Sour Blue Dust", "Banana Ice", "Juicy Peach Ice", "Drop Sour Savers", "Mexico Mango", "Blueberry Watermelon", "Fcuking Fab", "Sour Apple Ice", "White Gummy Ice", "Sour Watermelon Drop", "Lemon Hubba"], soldOut:[],
+  { name:"Geek Bar Pulse", brand:"Geek Bar", category:"Vapes", price:25, desc:"15K puffs", status:"in", color:"#cfd8f2",
+    flavors:["Blue Razz Ice", "Strawberry Savers", "B-Burst", "OMG B-Burst", "Sour Apple B-Burst", "Pink Lemonade", "Peach Lemonade", "Punch", "Sour Blue Dust", "Banana Ice", "Juicy Peach Ice", "Drop Sour Savers", "Mexico Mango", "Blueberry Watermelon", "Fcuking Fab", "Sour Apple Ice", "White Gummy Ice", "Sour Watermelon Drop"], soldOut:[],
     photos:{ "Blue Razz Ice":"images/gbp-blue-razz-ice.jpg", "Strawberry Savers":"images/gbp-strawberry-savers.jpg", "B-Burst":"images/gbp-b-burst.jpg", "OMG B-Burst":"images/gbp-omg-b-burst.jpg", "Sour Apple B-Burst":"images/gbp-sour-apple-b-burst.jpg", "Pink Lemonade":"images/gbp-pink-lemonade.jpg", "Peach Lemonade":"images/gbp-peach-lemonade.jpg", "Punch":"images/gbp-punch.jpg", "Sour Blue Dust":"images/gbp-sour-blue-dust.jpg", "Banana Ice":"images/gbp-banana-ice.jpg", "Juicy Peach Ice":"images/gbp-juicy-peach-ice.jpg", "Drop Sour Savers":"images/gbp-drop-sour-savers.jpg", "Mexico Mango":"images/gbp-mexico-mango.jpg", "Blueberry Watermelon":"images/gbp-blueberry-watermelon.jpg", "Fcuking Fab":"images/gbp-fcuking-fab.jpg", "Sour Apple Ice":"images/gbp-sour-apple-ice.jpg", "White Gummy Ice":"images/gbp-white-gummy-ice.jpg", "Sour Watermelon Drop":"images/gbp-sour-watermelon-drop.jpg" } },
-  { name:"Geek Bar Pulse X", category:"Vapes", price:25, desc:"Up to 25,000 puffs", status:"in", color:"#e3d3f0",
+  { name:"Geek Bar Pulse X", brand:"Geek Bar", category:"Vapes", price:25, desc:"25K puffs", status:"in", color:"#e3d3f0",
     flavors:["Orange Fcuking Fab", "Orange Jam", "Lemon Heads"], soldOut:[],
     photos:{ "Orange Fcuking Fab":"images/gbx-orange-fcuking-fab.jpg", "Orange Jam":"images/gbx-orange-jam.jpg", "Lemon Heads":"images/gbx-lemon-heads.jpg" } },
-  { name:"Geek Bar Pulse X2", category:"Vapes", price:30, desc:"Up to 50,000 puffs", status:"in", color:"#f4d5dc",
+  { name:"Geek Bar Pulse X2", brand:"Geek Bar", category:"Vapes", price:30, desc:"50K puffs", status:"in", color:"#f4d5dc",
     flavors:["Blue Razz Ice", "Wild Cherry Slush", "Banana Taffy Freeze", "Sour Fcuking Fab", "Blackberry Blueberry", "Blueberry Jam"], soldOut:[] },
-  { name:"Flum Float Mello Pro", category:"Vapes", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#d6ebe3",
+  { name:"Flum Float Mello Pro", brand:"Flum", category:"Vapes", price:25, desc:"50K puffs", status:"in", color:"#d6ebe3",
     flavors:["Strawberry Kiwi", "Strawberry Splash", "Vienna Bliss", "Sour Mango Pineapple", "Watermelon Icy", "Strawmelon", "Icy Mint", "Sour Apple Icy", "Cool Mint", "Miami Mint"], soldOut:[] },
-  { name:"UT Bar 50K", category:"Vapes", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#cfe0d8",
-    flavors:["Aloe Watermelon Sour Sweet", "Thai Mango Juice Peach", "Passion Fruit Mango", "Cool Mint Icy Mint", "Raspberry Grape Guava", "Clear", "Miami Mint Slush"], soldOut:[] },
-  { name:"UT Bar Clear Tank 50K", category:"Vapes", price:25, desc:"Up to 50,000 puffs", status:"in", color:"#dfe3ea",
-    flavors:["Peach Mango Watermelon", "Watermelon", "Orange", "Blue Razz Ice", "Green Apple Ice"], soldOut:[] },
-  { name:"Foger", category:"Vapes", price:25, status:"in", color:"#f6e3b4" },
-  { name:"Al Fakher", category:"Vapes", price:25, status:"in", color:"#e7d7bf" },
+  { name:"UT Bar", brand:"Flum", category:"Vapes", price:25, desc:"50K puffs", status:"in", color:"#cfe0d8",
+    flavors:["Aloe Watermelon Sour Sweet", "Thai Mango Juice Peach", "Passion Fruit Mango", "Cool Mint Icy Mint", "Raspberry Grape Guava"], soldOut:[] },
+  { name:"UT Bar Clear Tank", brand:"Flum", category:"Vapes", price:25, desc:"50K puffs", status:"in", color:"#dfe3ea",
+    flavors:["Peach Mango Watermelon", "Blue Razz Ice", "Green Apple Ice"], soldOut:[] },
+  { name:"Foger", brand:"Foger", category:"Vapes", price:25, status:"in", color:"#f6e3b4" },
+  { name:"Al Fakher", brand:"Al Fakher", category:"Vapes", price:25, status:"in", color:"#e7d7bf" },
 
   /* ---- Hemp carts & disposables ---- */
   { name:"Hidden Hills Live Rosin Cart 2g", category:"Hemp Carts", price:30, desc:"THC-P Ultra / D9", status:"in", color:"#dfe8d3",
@@ -303,26 +322,70 @@ function renderChips(){
   $("#chips").innerHTML = categories.map(c =>
     `<button class="chip" type="button" aria-pressed="${c===active}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
 }
-function render(){
-  const q = $("#search").value.trim().toLowerCase();
-  const list = ITEMS.filter(i => (active==="All" || i.category===active) &&
-    (!q || (i.name+" "+(i.desc||"")+" "+i.category+" "+(i.flavors||[]).join(" ")).toLowerCase().includes(q)));
-  if (!list.length){ $("#menu").innerHTML = `<p class="empty">No items match “${esc(q)}”. Try another word or pick “All”.</p>`; return; }
-  const groups = {};
-  list.forEach(i => (groups[i.category] ||= []).push(i));
-  $("#menu").innerHTML = Object.entries(groups).map(([cat, items]) => `
-    <section class="section" aria-label="${esc(cat)}">
-      <h2>${esc(cat)} <span>${items.length} item${items.length>1?"s":""}</span></h2>
-      <div class="grid">${items.map(it => `
+let activeBrand = "All brands";
+function renderBrands(){
+  const el = $("#brands");
+  const show = active === "Vapes";
+  el.hidden = !show; if (!show) return;
+  const brands = ["All brands", ...new Set(ITEMS.filter(i => i.category === "Vapes").map(i => i.brand || "Other"))];
+  if (!brands.includes(activeBrand)) activeBrand = "All brands";
+  el.innerHTML = brands.map(b => `<button class="chip" type="button" aria-pressed="${b===activeBrand}" data-brand="${esc(b)}">${esc(b)}</button>`).join("");
+}
+function tilesHTML(it, q){
+  const idx = ITEMS.indexOf(it);
+  const nameHit = !q || (it.name + " " + (it.brand||"")).toLowerCase().includes(q);
+  const fl = (it.flavors && it.flavors.length) ? it.flavors.filter(f => nameHit || f.toLowerCase().includes(q)) : [null];
+  return `<div class="tiles">${fl.map(f => {
+    const out = it.status === "out" || (f && (it.soldOut || []).includes(f));
+    const src = photoOf(it, f);
+    const ph = (f && it.photos && it.photos[f]) || (!f && src) ? `<img src="${esc(src)}" alt="" loading="lazy">`
+             : `<span class="mono" aria-hidden="true">${initials(f || it.name)}</span>`;
+    return `<button type="button" class="tile${out ? " out" : ""}" data-idx="${idx}"${f ? ` data-flavor="${esc(f)}"` : ""}>
+      <span class="ph" style="${(f && it.photos && it.photos[f]) || (!f && src) ? "" : `background:${esc(it.color||"#e5e9e4")}`}">${ph}</span>
+      <span class="fl">${esc(f || it.name)}${out ? " · Sold out" : ""}</span></button>`;
+  }).join("")}</div>`;
+}
+function typeHTML(it, q){
+  return `<div class="type">
+    <div class="type-head"><h3>${esc(it.name)}${it.desc ? `<span class="puffs">${esc(it.desc)}</span>` : ""}</h3><span class="price">${priceText(it)}</span></div>
+    ${tilesHTML(it, q)}</div>`;
+}
+function cardHTML(it){
+  return `
         <div class="card ${it.status==="out"?"out":""}" role="button" tabindex="0" data-idx="${ITEMS.indexOf(it)}">
           <div class="thumb" style="background:${esc(it.color||"#e5e9e4")}">${thumbHTML(it)}${badgeHTML(it)}</div>
           <div class="body">
             <div class="row"><span class="name">${esc(it.name)}</span><span class="price">${priceText(it)}</span></div>
             ${it.desc ? `<p class="desc">${esc(it.desc)}</p>` : ""}${flavorHTML(it)}
           </div>
-        </div>`).join("")}
-      </div>
+        </div>`;
+}
+function render(){
+  renderBrands();
+  const q = $("#search").value.trim().toLowerCase();
+  const list = ITEMS.filter(i => (active==="All" || i.category===active) &&
+    (active !== "Vapes" || activeBrand === "All brands" || (i.brand || "Other") === activeBrand) &&
+    (!q || (i.name+" "+(i.brand||"")+" "+(i.desc||"")+" "+i.category+" "+(i.flavors||[]).join(" ")).toLowerCase().includes(q)));
+  if (!list.length){ $("#menu").innerHTML = `<p class="empty">No items match “${esc(q)}”. Try another word or pick “All”.</p>`; return; }
+  const groups = {};
+  list.forEach(i => (groups[i.category] ||= []).push(i));
+  $("#menu").innerHTML = Object.entries(groups).map(([cat, items]) => {
+    if (cat === "Vapes"){
+      const byBrand = {};
+      items.forEach(i => (byBrand[i.brand || "Other"] ||= []).push(i));
+      return Object.entries(byBrand).map(([brand, its]) => `
+    <section class="section brand" aria-label="${esc(brand)}">
+      <h2>${esc(brand)} <span>${its.length} type${its.length>1?"s":""}</span></h2>
+      ${its.map(it => typeHTML(it, q)).join("")}
     </section>`).join("");
+    }
+    return `
+    <section class="section" aria-label="${esc(cat)}">
+      <h2>${esc(cat)} <span>${items.length} item${items.length>1?"s":""}</span></h2>
+      <div class="grid">${items.map(cardHTML).join("")}
+      </div>
+    </section>`;
+  }).join("");
 }
 
 $("#chips").addEventListener("click", e => {
@@ -331,6 +394,10 @@ $("#chips").addEventListener("click", e => {
   renderChips(); render();
 });
 $("#search").addEventListener("input", render);
+$("#brands").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  activeBrand = b.dataset.brand; render();
+});
 
 const dlg = $("#dlg");
 let dlgItem = null;
@@ -352,6 +419,8 @@ function openItem(it, f){
   if (!dlg.open){ if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open",""); }
 }
 $("#menu").addEventListener("click", e => {
+  const t = e.target.closest(".tile");
+  if (t){ openItem(ITEMS[t.dataset.idx], t.dataset.flavor || null); return; }
   const c = e.target.closest(".card"); if (!c) return;
   const fl = e.target.closest(".flavor");
   openItem(ITEMS[c.dataset.idx], fl ? fl.dataset.flavor : null);
